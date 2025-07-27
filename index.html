@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Proposal</title>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+  <div class="image-container outside">
+    <img src="Items/normal2.png" alt="Normal image" />
+  </div>
+
+  <div class="card">
+    <div class="bubble">
+      <p>Will you marry me?</p>
+      <div class="bubble-tail"></div>
+    </div>
+
+    <div class="actions">
+      <button class="btn no">No</button>
+      <button class="btn yes">Yes</button>
+    </div>
+  </div>
+
+  <div id="now-playing" class="now-playing">Now Playing: 
+Bad Bunny - DtMF</div>
+  <audio id="bg-audio" src="Items/Bad Bunny.m4a" autoplay loop></audio>
+
+  <script>
+    let noPressed = false;
+    let startButton;
+
+    function removeStartButton() {
+      if (startButton && startButton.parentNode) {
+        startButton.remove();
+        startButton = null;
+      }
+    }
+
+    document.querySelector('.btn.yes').addEventListener('click', () => {
+      const imgElement = document.querySelector('.image-container.outside img');
+      const bubbleText = document.querySelector('.bubble p');
+      const actionsContainer = document.querySelector('.actions');
+
+      removeStartButton();
+
+      if (noPressed) {
+        imgElement.src = 'Items/Angry2.png';
+        bubbleText.textContent = 'If you want to say no, you are gonna have to beat me in a game of tic-tac-toe!';
+        actionsContainer.style.display = 'none';
+        // Place button below the pink bubble
+        const cardDiv = document.querySelector('.card');
+        startButton = document.createElement('button');
+        startButton.textContent = 'Start Game';
+        startButton.className = 'btn start';
+        startButton.style.display = 'block';
+        startButton.style.margin = '24px auto 0 auto';
+        cardDiv.appendChild(startButton);
+        startButton.addEventListener('click', () => {
+          document.body.innerHTML = '';
+          startTicTacToe();
+        });
+      } else {
+        imgElement.src = 'Items/Happy2.png';
+        bubbleText.textContent = 'Wow, Im so happy you said yes!';
+        actionsContainer.style.display = 'none';
+      }
+    });
+
+    document.querySelector('.btn.no').addEventListener('click', () => {
+      const imgElement = document.querySelector('.image-container.outside img');
+      const bubbleText = document.querySelector('.bubble p');
+      const actionsContainer = document.querySelector('.actions');
+
+      removeStartButton();
+
+      if (noPressed) {
+        imgElement.src = 'Items/normal2.png';
+        bubbleText.textContent = "Wow, don't scare me like that! Again now, will you marry me?";
+        noPressed = false;
+      } else {
+        imgElement.src = 'Items/Nervous2.png';
+        bubbleText.textContent = 'What???!! Are you sure?';
+        noPressed = true;
+      }
+    });
+
+    function startTicTacToe() {
+      // Clear the page
+      document.body.innerHTML = '';
+
+      // Add a wrapper for message and board
+      const gameWrapper = document.createElement('div');
+      gameWrapper.style.display = 'flex';
+      gameWrapper.style.flexDirection = 'column';
+      gameWrapper.style.alignItems = 'center';
+      document.body.appendChild(gameWrapper);
+
+      // Add a message for the player's turn
+      const gameMsg = document.createElement('p');
+      gameMsg.textContent = 'Your turn!';
+      gameMsg.className = 'game-msg';
+      gameWrapper.appendChild(gameMsg);
+
+      // Add a white square background for the game
+      const boardBg = document.createElement('div');
+      boardBg.className = 'tic-tac-toe-bg';
+      boardBg.style.display = 'flex';
+      boardBg.style.justifyContent = 'center';
+      boardBg.style.alignItems = 'center';
+      boardBg.style.background = '#23232b';
+      boardBg.style.borderRadius = '24px';
+      boardBg.style.boxShadow = '0 8px 24px rgba(0,0,0,0.08)';
+      boardBg.style.padding = '32px 16px';
+      boardBg.style.margin = '0 auto';
+      gameWrapper.appendChild(boardBg);
+
+      // Add the board container inside the white square
+      const container = document.createElement('div');
+      container.className = 'tic-tac-toe';
+      boardBg.appendChild(container);
+
+      // Inject styles for the game
+      const style = document.createElement('style');
+      style.textContent = `
+        .tic-tac-toe {
+          display: grid;
+          grid-template-columns: repeat(3, 100px);
+          grid-gap: 5px;
+          justify-content: center;
+          margin: 20px auto;
+        }
+        .tic-tac-toe-bg {
+          background: #fff;
+          border-radius: 24px;
+          box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+          padding: 32px 16px;
+          margin: 0 auto;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+        .cell {
+          width: 100px;
+          height: 100px;
+          background: #FFF0F8;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          font-size: 2rem;
+          font-weight: bold;
+          cursor: pointer;
+          border-radius: 16px;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .game-msg {
+          text-align: center;
+          font-size: 1.2rem;
+          margin-bottom: 10px;
+          margin-top: 20px;
+        }
+      `;
+      document.head.appendChild(style);
+
+      // Game logic
+      const board = ['', '', '', '', '', '', '', '', ''];
+      for (let i = 0; i < 9; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'cell';
+        container.appendChild(cell);
+        cell.addEventListener('click', () => {
+          if (board[i] === '') {
+            board[i] = 'X';
+            cell.textContent = 'X';
+            if (checkWinner(board, 'X')) {
+              endGame('You win!', 'Items/Sad2.png', "Ok, I guess it is what it is...");
+              return;
+            }
+            const cpuIndex = cpuMove(board);
+            if (cpuIndex !== undefined) {
+              board[cpuIndex] = 'O';
+              container.children[cpuIndex].textContent = 'O';
+              if (checkWinner(board, 'O')) {
+                endGame('CPU wins!', 'Items/Sad2.png', "Ok, I guess it is what it is...");
+                return;
+              }
+            }
+          }
+        });
+      }
+    }
+
+    function checkWinner(board, player) {
+      const winningCombinations = [
+        [0, 1, 2], [3, 4, 5], [6, 7, 8],
+        [0, 3, 6], [1, 4, 7], [2, 5, 8],
+        [0, 4, 8], [2, 4, 6]
+      ];
+
+      return winningCombinations.some(combination =>
+        combination.every(index => board[index] === player)
+      );
+    }
+
+    function cpuMove(board) {
+      const emptyIndices = board.map((value, index) => value === '' ? index : null).filter(index => index !== null);
+      return emptyIndices[0]; // Always pick the first empty spot
+    }
+
+    function endGame(message, imgSrc, text) {
+      document.body.innerHTML = '';
+
+      if (message === 'You win!') {
+        // Show Sad2.png and text in the same UI as Happy2.png
+        const imgContainer = document.createElement('div');
+        imgContainer.className = 'image-container outside';
+        const imgElement = document.createElement('img');
+        imgElement.src = 'Items/Sad2.png';
+        imgElement.alt = 'Sad image';
+        imgContainer.appendChild(imgElement);
+        document.body.appendChild(imgContainer);
+
+        const cardDiv = document.createElement('div');
+        cardDiv.className = 'card';
+        const bubbleDiv = document.createElement('div');
+        bubbleDiv.className = 'bubble';
+        const bubbleText = document.createElement('p');
+        bubbleText.textContent = text;
+        bubbleDiv.appendChild(bubbleText);
+        const bubbleTail = document.createElement('div');
+        bubbleTail.className = 'bubble-tail';
+        bubbleDiv.appendChild(bubbleTail);
+        cardDiv.appendChild(bubbleDiv);
+        document.body.appendChild(cardDiv);
+      } else if (message === 'CPU wins!') {
+        // Only show Try Again button, no card
+        const tryAgainBtn = document.createElement('button');
+        tryAgainBtn.textContent = 'Try Again';
+        tryAgainBtn.className = 'btn start';
+        tryAgainBtn.style.display = 'block';
+        tryAgainBtn.style.margin = '120px auto 0 auto';
+        tryAgainBtn.style.padding = '18px 40px';
+        document.body.appendChild(tryAgainBtn);
+        tryAgainBtn.addEventListener('click', () => {
+          document.body.innerHTML = '';
+          startTicTacToe();
+        });
+      }
+    }
+
+    const audio = document.getElementById('bg-audio');
+    const nowPlaying = document.getElementById('now-playing');
+
+    // Autoplay the song on page load
+    window.addEventListener('load', () => {
+      const playAudio = () => {
+        audio.play();
+        nowPlaying.style.display = 'block';
+        document.removeEventListener('click', playAudio); // Remove listener after first interaction
+      };
+
+      // Attempt to play immediately
+      audio.play().catch(() => {
+        // Fallback: Play on user interaction
+        document.addEventListener('click', playAudio);
+      });
+    });
+  </script>
+
+  <style>
+    .image-container.outside img[src$=".png"] {
+      margin-top: 10px;
+    }
+    .tic-tac-toe {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-gap: 5px;
+      justify-content: center;
+      margin: 20px auto;
+    }
+
+    .cell {
+      width: 100px;
+      height: 100px;
+      background: #ccc;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .end-image {
+      display: block;
+      margin: 20px auto;
+      max-width: 300px;
+    }
+
+    .end-text {
+      text-align: center;
+      font-size: 1.5rem;
+      margin-top: 10px;
+    }
+
+    .btn.start {
+      display: block;
+      margin: 20px auto;
+      padding: 10px 20px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .game-msg {
+      text-align: center;
+      font-size: 1.2rem;
+      margin-top: 20px;
+    }
+
+    .now-playing {
+      display: none;
+      text-align: center;
+      font-size: 1.2rem;
+      margin-top: 20px;
+      color: #fff;
+    }
+  </style>
+</body>
+</html>

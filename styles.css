@@ -1,0 +1,131 @@
+/* reset & font */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  background: #FFFBEB url('Items/B.png') no-repeat center center fixed;
+  background-size: cover;
+  display: flex;
+  flex-direction: column;   /* stack card then controls */
+  align-items: center;      /* center horizontally */
+  justify-content: center;  /* center vertically on screen */
+  height: 100vh;
+  font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+}
+
+/* card wrapper */
+.card {
+  background: #fff;
+  border: 4px solid #FFE3E3;
+  border-radius: 24px;
+  padding: 24px;
+  width: 90%;
+  max-width: 380px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  text-align: center;
+  margin-top: 100px;
+}
+
+/* top image */
+.image-container {
+  width: 80%;
+  margin: 0 auto 20px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 3px solid #FFDDEE;
+}
+.image-container img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* new image position */
+.image-container.outside {
+  position: absolute;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 300px;
+  height: auto;
+  box-shadow: none;
+  border-radius: 0;
+  border: none;
+}
+
+/* speech bubble */
+.bubble {
+  position: relative;
+  background: #FFF0F8;
+  border: 3px solid #FFDDEE;
+  border-radius: 20px;
+  padding: 16px;
+  margin-bottom: 32px;
+  color: #333;
+  font-size: 1.1rem;
+  line-height: 1.4;
+}
+.bubble-tail {
+  position: absolute;
+  bottom: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 16px solid transparent;
+  border-right: 16px solid transparent;
+  border-top: 16px solid #FFDDEE;
+}
+
+/* buttons */
+.actions {
+  display: flex;
+  justify-content: space-around;
+  gap: 16px;
+}
+.btn {
+  flex: 1;
+  max-width: 120px;
+  padding: 12px 0;
+  border: none;
+  border-radius: 32px;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: transform 0.2s;
+}
+.btn:hover {
+  transform: translateY(-2px);
+}
+.btn:active {
+  transform: translateY(0);
+}
+
+/* “No” button style */
+.btn.no {
+  background: #CFFAFE;
+  color: #0369A1;
+}
+
+/* “Yes” button style */
+.btn.yes {
+  background: #FFC9DE;
+  color: #D6336C;
+}
+
+/* Now Playing element */
+#now-playing {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(91, 26, 26, 0.8);
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: none;
+}
